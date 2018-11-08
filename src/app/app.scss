@@ -14,3 +14,25 @@
 // To declare rules for a specific mode, create a child rule
 // for the .md, .ios, or .wp mode classes. The mode class is
 // automatically applied to the <body> element in the app.
+
+.bg-royal {
+  background: #141e30; /* fallback for old browsers */
+  background: -webkit-linear-gradient(to right, #141e30, #243b55); /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to right, #141e30, #243b55); /* Modern Browser */
+}
+
+.bg-clouds {
+  background: #ECE9E6;  /* fallback for old browsers */
+  background: -webkit-linear-gradient(to right, #FFFFFF, #ECE9E6);  /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to right, #FFFFFF, #ECE9E6); /* Modern Browser */
+}
+
+.card--border-radius {
+  border-radius: 5px;
+}
+
+.card--box-shadow {
+  -webkit-box-shadow: 3px 4px 7px 0px rgba(240,249,250,0.6);
+  -moz-box-shadow: 3px 4px 7px 0px rgba(240,249,250,0.6);
+  box-shadow: 3px 4px 7px 0px rgba(240,249,250,0.6);
+}

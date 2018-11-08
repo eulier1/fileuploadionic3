@@ -1,0 +1,14 @@
+page-login {
+  ion-grid {
+    height: 100%;
+
+    & > ion-row {
+      height: inherit;
+      align-items: center;
+    }
+  }
+
+  .bg-transparent {
+    background: transparent;
+  }
+}
