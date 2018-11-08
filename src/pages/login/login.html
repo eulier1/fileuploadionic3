@@ -18,7 +18,9 @@
               </ion-item>
 
               <div padding>
-                <button ion-button color="primary" block>Login</button>
+                <button *ngIf="!showLoader" ion-button color="primary" block> Login </button>
+                <button *ngIf="showLoader" ion-button color="primary" block disabled> <ion-spinner name="dots"></ion-spinner></button>
+
               </div>
 
             </ion-list>

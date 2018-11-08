@@ -14,6 +14,7 @@ export class LoginPage {
 
   public username: string = 'mobileapp'
   public password: string = 'mobileapp'
+  public showLoader: boolean = false
 
   constructor(
     public navCtrl: NavController,
@@ -24,7 +25,7 @@ export class LoginPage {
   }
 
   login(username: string, password: string) {
-    //this.$window.localStorage.removeItem('api-token');
+    this.showLoader = true
 
     return this.loginProvider.login(username, password)
       .subscribe(
@@ -36,12 +37,14 @@ export class LoginPage {
                 .then(
                   (res) => {
                     console.log(res)
+                    this.showLoader = false
                     this.navCtrl.push(HomePage)
                   }
                 )
                 .catch(
                   (e) => {
                     console.log(e)
+                    this.showLoader = false
                     this.displayToast( {msg: e, duration: 5000, pos: 'top', shCloseButton: false } )
                   }
                 )
@@ -50,6 +53,7 @@ export class LoginPage {
         },
         (e: HttpErrorResponse) => {
           console.log(e)
+          this.showLoader = false
           this.displayToast( {msg: e.message, duration: 5000, pos: 'top', shCloseButton: false } )
         }
       )
