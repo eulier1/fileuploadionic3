@@ -1,7 +1,38 @@
 
 <ion-content padding>
-  The world is your oyster.
-  <p>
-    If you get lost, the <a href="http://ionicframework.com/docs/v2">docs</a> will be your guide.
-  </p>
+    <button ion-item (click)="onSelect(toggleCapture.value)" >
+        <ion-label *ngIf="!toggleCapture.checked" ><ion-icon ios="ios-camera" md="md-camera"></ion-icon> Take Photo</ion-label>
+        <ion-label *ngIf="toggleCapture.checked" ><ion-icon ios="ios-image" md="md-image"></ion-icon> Search Image</ion-label>
+        <ion-toggle #toggleCapture checked="false"></ion-toggle>
+    </button>
+    <ion-item  >
+      <p *ngIf="imageUploaded.name == '' " >Remember to upload an image</p>
+      <p *ngIf="imageUploaded.name != '' " >Image Name</p>
+      <h4 *ngIf="imageUploaded.name != '' " > {{imageUploaded.name}} </h4>
+      <ion-avatar item-end *ngIf="imageUploaded.name != '' ">
+        <img [src]="domSanitizer.bypassSecurityTrustUrl(imageUploaded.data)">
+      </ion-avatar>
+    </ion-item>
+
+  <form >
+    <ion-list>
+      <ion-item>
+        <ion-label floating>Notebook</ion-label>
+        <ion-input type="password"></ion-input>
+      </ion-item>
+      <ion-item>
+          <ion-label floating>Sample</ion-label>
+          <ion-input type="password"></ion-input>
+      </ion-item>
+      <ion-item>
+          <ion-textarea class="textarea__margin" rows="5" placeholder="Description" maxlength="8192"></ion-textarea>
+      </ion-item>
+    </ion-list>
+  </form>
+
 </ion-content>
+
+<ion-footer text-right padding >
+    <button ion-button color="light">Cancel</button>
+    <button ion-button >Upload</button>
+</ion-footer>

@@ -36,3 +36,13 @@
   -moz-box-shadow: 3px 4px 7px 0px rgba(240,249,250,0.6);
   box-shadow: 3px 4px 7px 0px rgba(240,249,250,0.6);
 }
+
+// Utilities
+.bg-transparent {
+  background: transparent;
+}
+
+//reset & formats
+textarea {
+  margin: 4rem 0px !important;
+}

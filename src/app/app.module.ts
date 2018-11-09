@@ -21,7 +21,8 @@ export function provideSettings(storage: Storage) {
    */
   return new Settings(storage);
 }
-
+import { Camera } from '@ionic-native/camera';
+import { AndroidPermissions } from '@ionic-native/android-permissions';
 @NgModule({
   declarations: [
     MyApp,
@@ -40,6 +41,8 @@ export function provideSettings(storage: Storage) {
   ],
   providers: [
     Api,
+    AndroidPermissions,
+    Camera,
     StatusBar,
     SplashScreen,
     { provide: ErrorHandler, useClass: IonicErrorHandler },

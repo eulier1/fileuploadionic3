@@ -46,14 +46,20 @@ $colors: (
 // --------------------------------------------------
 // iOS only Sass variables can go here
 
-
+$toggle-ios-handle-background-color-off: #8a8585 ;
+$toggle-ios-track-background-color-off: #696767 ;
+$toggle-ios-handle-background-color-on: #cfb590 ;
+$toggle-ios-track-background-color-on : #ebded1 ;
 
 
 // App Material Design Variables
 // --------------------------------------------------
 // Material Design only Sass variables can go here
 
-
+$toggle-md-handle-background-color-off: #8a8585 ;
+$toggle-md-track-background-color-off: #696767 ;
+$toggle-md-handle-background-color-on: #cfb590 ;
+$toggle-md-track-background-color-on : #ebded1 ;
 
 
 // App Windows Variables

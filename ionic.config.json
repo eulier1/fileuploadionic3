@@ -1,6 +1,8 @@
 {
   "name": "Fileupload",
-  "integrations": {},
+  "integrations": {
+    "cordova": {}
+  },
   "type": "ionic-angular",
   "pro_id": "12d4fb2f"
 }
