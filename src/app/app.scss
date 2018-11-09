@@ -37,6 +37,14 @@
   box-shadow: 3px 4px 7px 0px rgba(240,249,250,0.6);
 }
 
+.icon-camera {
+  color: $toggle-md-handle-background-color-off;
+}
+
+.icon-image {
+  color: $toggle-md-track-background-color-on;
+}
+
 // Utilities
 .bg-transparent {
   background: transparent;

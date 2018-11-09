@@ -1,17 +1,18 @@
 
 <ion-content padding>
     <button ion-item (click)="onSelect(toggleCapture.value)" >
-        <ion-label *ngIf="!toggleCapture.checked" ><ion-icon ios="ios-camera" md="md-camera"></ion-icon> Take Photo</ion-label>
-        <ion-label *ngIf="toggleCapture.checked" ><ion-icon ios="ios-image" md="md-image"></ion-icon> Search Image</ion-label>
+        <ion-label *ngIf="!toggleCapture.checked" ><ion-icon class="icon-camera" ios="ios-camera" md="md-camera"></ion-icon> Take Photo</ion-label>
+        <ion-label *ngIf="toggleCapture.checked" ><ion-icon class="icon-image" ios="ios-image" md="md-image"></ion-icon> Search Image</ion-label>
         <ion-toggle #toggleCapture checked="false"></ion-toggle>
     </button>
     <ion-item  >
-      <p *ngIf="imageUploaded.name == '' " >Remember to upload an image</p>
-      <p *ngIf="imageUploaded.name != '' " >Image Name</p>
-      <h4 *ngIf="imageUploaded.name != '' " > {{imageUploaded.name}} </h4>
-      <ion-avatar item-end *ngIf="imageUploaded.name != '' ">
+      <ion-avatar item-start *ngIf="imageUploaded.name != '' ">
         <img [src]="domSanitizer.bypassSecurityTrustUrl(imageUploaded.data)">
       </ion-avatar>
+      <p *ngIf="imageUploaded.name == '' && !toggleCapture.checked" >Tap 👆 to Take Photo</p>
+      <p *ngIf="imageUploaded.name == '' && toggleCapture.checked" >Tap 👆 to Search Image</p>
+      <p *ngIf="imageUploaded.name != '' " >Image Name</p>
+      <h4 *ngIf="imageUploaded.name != '' " > {{imageUploaded.name}} </h4>
     </ion-item>
 
   <form >

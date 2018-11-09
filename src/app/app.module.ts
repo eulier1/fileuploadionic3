@@ -23,6 +23,7 @@ export function provideSettings(storage: Storage) {
 }
 import { Camera } from '@ionic-native/camera';
 import { AndroidPermissions } from '@ionic-native/android-permissions';
+
 @NgModule({
   declarations: [
     MyApp,
