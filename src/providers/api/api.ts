@@ -5,6 +5,8 @@ import { URLAPI } from '../enviroment';
 @Injectable()
 export class Api {
   public url: string = URLAPI
+  public urlNotebooks: string = `notebooks`
+  public urlSamples: string = `management/samples`
 
   constructor(public http: HttpClient) {
   }

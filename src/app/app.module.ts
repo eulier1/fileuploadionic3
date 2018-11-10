@@ -1,6 +1,8 @@
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { MainHttpInterceptor } from '../providers/http-interceptor.service'
 import { BrowserModule } from '@angular/platform-browser';
 import { ErrorHandler, NgModule } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
 import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
 import { IonicStorageModule, Storage } from '@ionic/storage';
 import { SplashScreen } from '@ionic-native/splash-screen';
@@ -23,6 +25,8 @@ export function provideSettings(storage: Storage) {
 }
 import { Camera } from '@ionic-native/camera';
 import { AndroidPermissions } from '@ionic-native/android-permissions';
+import { NotebookProvider } from '../providers/notebook/notebook';
+import { SamplesProvider } from '../providers/sample/sample';
 
 @NgModule({
   declarations: [
@@ -32,6 +36,7 @@ import { AndroidPermissions } from '@ionic-native/android-permissions';
   imports: [
     BrowserModule,
     HttpClientModule,
+    ReactiveFormsModule,
     IonicModule.forRoot(MyApp),
     IonicStorageModule.forRoot()
   ],
@@ -48,7 +53,11 @@ import { AndroidPermissions } from '@ionic-native/android-permissions';
     SplashScreen,
     { provide: ErrorHandler, useClass: IonicErrorHandler },
     { provide: Settings, useFactory: provideSettings, deps: [Storage] },
-    LoginProvider
+    { provide: HTTP_INTERCEPTORS, useClass: MainHttpInterceptor, multi: true },
+    LoginProvider,
+    NotebookProvider,
+    SamplesProvider,
+
   ]
 })
 export class AppModule {}

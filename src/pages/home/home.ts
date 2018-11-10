@@ -1,37 +1,123 @@
+import { NotebookProvider } from './../../providers/notebook/notebook';
+import { SamplesProvider } from '../../providers/sample/sample';
 import { Component } from '@angular/core';
-import { NavController, Platform } from 'ionic-angular';
+import { NavController, Platform, ActionSheetController } from 'ionic-angular';
 import { Camera, CameraOptions } from '@ionic-native/camera';
 import { AndroidPermissions } from '@ionic-native/android-permissions';
 import { DomSanitizer } from '@angular/platform-browser';
+import { FormControl } from '@angular/forms';
+import 'rxjs/add/operator/debounceTime';
+import 'rxjs/add/operator/distinctUntilChanged';
+import 'rxjs/add/operator/switchMap';
+
+interface IListResponse {
+  list: any[];
+  listIds: any[];
+  page_request: IPageRequest;
+
+}
+
+interface IPageRequest {
+  limit: string;
+  num_pages: number;
+  page: string;
+  orderBy: string[];
+}
 @Component({
   selector: 'page-home',
   templateUrl: 'home.html'
 })
 export class HomePage {
 
-  public imageUploaded: {
-    name: string,
-    data: string,
-    mimeType: string
-  }
+  public base64Image = ''
+  public nameImage = ''
+  public blobImage = null
 
-  private option : CameraOptions
+  public option : CameraOptions
+
+  notebookSearch: FormControl = new FormControl('');
+  public notebookItems: Array<string>;
 
   constructor(
     public navCtrl: NavController,
-    private camera: Camera,
-    private androidPermissions: AndroidPermissions,
     public domSanitizer: DomSanitizer,
-    public platform: Platform) {
-      this.initImageUploaded()
+    public platform: Platform,
+    private camera: Camera,
+    public actionSheetCtrl: ActionSheetController,
+    private androidPermissions: AndroidPermissions,
+    private notebookProvider: NotebookProvider,
+    private samplesProvider: SamplesProvider
+    ) {
+      this.notebookProvider.search().subscribe(
+        (response: IListResponse | any) => {
+
+          console.log('Notebook', response.list )
+        }
+      )
+
+      this.samplesProvider.search().subscribe(
+        (response: IListResponse | any) => {
+
+          console.log('Samples', response.list )
+        }
+      )
+
+      // this.notebookSearch.valueChanges
+      // .debounceTime(400)
+      // .distinctUntilChanged()
+      // .switchMap(
+      //   (term) =>  { console.log(term); return this.notebookProvider.search(null,term) })
+      // .subscribe(
+      //   (res) => console.log(res)
+      // )
+
   }
 
-  onSelect(toggle: boolean) {
-    if( toggle ) {
-      this.loadCameraOrGallery('gallery')
-    } else {
-      this.loadCameraOrGallery('camera')
+  onSelect() {
+
+    let iconImage = ''
+    let iconCamera = ''
+
+    if (this.platform.is('ios')){
+      iconImage = 'ios-image'
+      iconCamera = 'ios-camera'
     }
+
+    if (this.platform.is('android')){
+      iconImage = 'md-image'
+      iconCamera = 'md-camera'
+    }
+
+    let actionSheet = this.actionSheetCtrl.create({
+      title: 'Modify your album',
+      buttons: [
+        {
+          text: 'Camera',
+          icon: iconCamera,
+          handler: () => {
+            console.log('Camera clicked');
+            this.loadCameraOrGallery('camera')
+          }
+        },
+        {
+          text: 'Gallery',
+          icon: iconImage,
+          handler: () => {
+            console.log('Gallery clicked');
+            this.loadCameraOrGallery('gallery')
+          }
+        },
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          handler: () => {
+            console.log('Cancel clicked');
+          }
+        }
+      ]
+    });
+    actionSheet.present();
+
   }
 
   private loadOption(load: string) {
@@ -66,10 +152,12 @@ export class HomePage {
             // imageData is either a base64 encoded string or a file URI
             // If it's base64 (DATA_URL):
             // console.log(imageData)
-            let base64Image = 'data:image/jpeg;base64,' + imageData;
-            this.imageUploaded.name = `image${Math.random()}`
-            this.imageUploaded.data = base64Image
-            this.imageUploaded.mimeType = 'image/jpeg'
+            this.base64Image = 'data:image/jpeg;base64,' + imageData;
+            this.nameImage = `image${Math.random()}`
+            this.blobImage = this.dataURItoBlob(this.base64Image)
+
+
+            console.log(this.blobImage)
 
           }, (err) => {
             // Handle error
@@ -98,13 +186,13 @@ export class HomePage {
     }
   }
 
-  private initImageUploaded() {
-    this.imageUploaded =
-      {
-        name : '',
-        data : '',
-        mimeType : 'image/jpeg'
-      }
+  private dataURItoBlob(dataURI) {
+    var binary = atob(dataURI.split(',')[1]);
+    var array = [];
+    for(var i = 0; i < binary.length; i++) {
+        array.push(binary.charCodeAt(i));
+    }
+    return new Blob([new Uint8Array(array)], {type: 'image/jpeg'});
   }
 
 }

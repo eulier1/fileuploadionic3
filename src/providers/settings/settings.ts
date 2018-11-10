@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage';
 @Injectable()
 export class Settings {
-  // 'auth-token';
+  // 'api-token';
 
   constructor(public storage: Storage) {}
 
@@ -15,7 +15,7 @@ export class Settings {
   getValue(key: string) {
     return this.storage.get(key)
       .then(settings => {
-        return settings[key];
+        return settings;
       });
   }
 

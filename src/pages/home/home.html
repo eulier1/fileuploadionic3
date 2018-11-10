@@ -1,29 +1,29 @@
 
 <ion-content padding>
-    <button ion-item (click)="onSelect(toggleCapture.value)" >
-        <ion-label *ngIf="!toggleCapture.checked" ><ion-icon class="icon-camera" ios="ios-camera" md="md-camera"></ion-icon> Take Photo</ion-label>
-        <ion-label *ngIf="toggleCapture.checked" ><ion-icon class="icon-image" ios="ios-image" md="md-image"></ion-icon> Search Image</ion-label>
-        <ion-toggle #toggleCapture checked="false"></ion-toggle>
+    <button ion-item (click)="onSelect()" >
+        <ion-label> Upload Image </ion-label>
+        <ion-icon item-end ios="ios-cloud-upload" md="md-cloud-upload"></ion-icon>
     </button>
-    <ion-item  >
-      <ion-avatar item-start *ngIf="imageUploaded.name != '' ">
-        <img [src]="domSanitizer.bypassSecurityTrustUrl(imageUploaded.data)">
+    <ion-item *ngIf="blobImage" >
+      <ion-avatar item-start >
+        <img [src]="domSanitizer.bypassSecurityTrustUrl(base64Image)">
       </ion-avatar>
-      <p *ngIf="imageUploaded.name == '' && !toggleCapture.checked" >Tap 👆 to Take Photo</p>
-      <p *ngIf="imageUploaded.name == '' && toggleCapture.checked" >Tap 👆 to Search Image</p>
-      <p *ngIf="imageUploaded.name != '' " >Image Name</p>
-      <h4 *ngIf="imageUploaded.name != '' " > {{imageUploaded.name}} </h4>
+      <p >Image Name</p>
+      <h4> {{nameImage}} </h4>
     </ion-item>
 
   <form >
     <ion-list>
       <ion-item>
         <ion-label floating>Notebook</ion-label>
-        <ion-input type="password"></ion-input>
+        <ion-input type="text" [formControl]="notebookSearch" ></ion-input>
+        <ul>
+          <li *ngFor="let item of notebookItems | async">{{item}}</li>
+        </ul>
       </ion-item>
       <ion-item>
           <ion-label floating>Sample</ion-label>
-          <ion-input type="password"></ion-input>
+          <ion-input type="text"></ion-input>
       </ion-item>
       <ion-item>
           <ion-textarea class="textarea__margin" rows="5" placeholder="Description" maxlength="8192"></ion-textarea>

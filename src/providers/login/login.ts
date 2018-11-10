@@ -9,7 +9,7 @@ export class LoginProvider {
   }
 
   login(username: string, password: string) {
-    return this.api.post('token/', { username, password })
+    return this.api.post('/token/', { username, password })
   }
 
 }

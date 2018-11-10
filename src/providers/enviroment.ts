@@ -1,1 +1,1 @@
-export const URLAPI = `https://app.sciencedesk.net/api/`
+export const URLAPI = `https://app.sciencedesk.net/api`
