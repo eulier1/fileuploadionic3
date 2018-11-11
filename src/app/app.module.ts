@@ -28,6 +28,7 @@ import { Camera } from '@ionic-native/camera';
 import { AndroidPermissions } from '@ionic-native/android-permissions';
 import { NotebookProvider } from '../providers/notebook/notebook';
 import { SamplesProvider } from '../providers/sample/sample';
+import { UploadProvider } from '../providers/upload/upload';
 
 @NgModule({
   declarations: [
@@ -59,6 +60,7 @@ import { SamplesProvider } from '../providers/sample/sample';
     LoginProvider,
     NotebookProvider,
     SamplesProvider,
+    UploadProvider,
 
   ]
 })

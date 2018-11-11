@@ -49,5 +49,5 @@
 
 <ion-footer text-right padding >
     <button ion-button color="light">Cancel</button>
-    <button ion-button >Upload</button>
+    <button ion-button [disabled]="blobImage == null || notebookSelected.title == '' || sampleSelected.name == '' || description.length < 5 " (click)="addFileToNewEntry(blobImage, notebookSelected.id, sampleSelected.id, description)" >Upload</button>
 </ion-footer>

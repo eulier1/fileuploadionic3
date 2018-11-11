@@ -1,5 +1,5 @@
-import { Injectable, Injector } from '@angular/core';
-import { HttpEvent, HttpInterceptor, HttpHandler, HttpRequest, HttpHeaders } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { HttpEvent, HttpInterceptor, HttpHandler, HttpRequest } from '@angular/common/http';
 import { Observable } from 'rxjs/Rx';
 import 'rxjs/add/observable/throw'
 import 'rxjs/add/operator/catch';
@@ -10,26 +10,31 @@ import { Settings } from './settings/settings';
 export class MainHttpInterceptor implements HttpInterceptor {
 
   public authToken: string = null
-  public subscription: Observable<any> = null
+
 
   constructor(private setting: Settings) { }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
 
+    let subscription: Observable<any> = null
+
     console.log("intercepted request ... ");
     // Clone the request to add the new header.
 
-    this.subscription = Observable.fromPromise(
+    subscription = Observable.fromPromise(
       this.getToken()
     )
 
-    return this.subscription.flatMap(
+    return subscription.flatMap(
       (token) => {
+
         if (!req.url.match('token')){
-          console.log(token)
-          const authReq = req.clone({ setHeaders: { 'Authorization': 'Token ' + token} });
+
+          const authReq = req.clone({ setHeaders: { 'Authorization': 'Token ' + token.token} });
+          console.log(authReq)
           return next.handle(authReq)
           .catch((error, caught) => {
+            console.log(error)
           return Observable.throw(error);
           }) as any;
         } else {
@@ -43,9 +48,9 @@ export class MainHttpInterceptor implements HttpInterceptor {
   }
 
   async getToken () {
-    return await this.setting.getValue('api-token').then(
-      (res : any) => res.token
-    )
+    return await this.setting.getValue('api-token')
+    .then(
+      (res : any) =>  res    )
   }
 
 }

@@ -1,3 +1,4 @@
+import { UploadProvider } from './../../providers/upload/upload';
 import { NotebookProvider } from './../../providers/notebook/notebook';
 import { SamplesProvider } from '../../providers/sample/sample';
 import { Component } from '@angular/core';
@@ -31,7 +32,7 @@ export class HomePage {
 
   public base64Image = ''
   public nameImage = ''
-  public blobImage = null
+  public blobImage: Blob = null
 
   public option : CameraOptions
 
@@ -45,8 +46,10 @@ export class HomePage {
   public sampleItems: Array<any>
   public placeholderSample: string = 'Sample'
 
-  public maxlenTextarea: number = 240
+  public maxlenTextarea: number = 8192
   public description: FormControl = new FormControl()
+
+  public showLoader: boolean = false
   constructor(
     public navCtrl: NavController,
     public domSanitizer: DomSanitizer,
@@ -55,7 +58,8 @@ export class HomePage {
     public actionSheetCtrl: ActionSheetController,
     private androidPermissions: AndroidPermissions,
     private notebookProvider: NotebookProvider,
-    private samplesProvider: SamplesProvider
+    private samplesProvider: SamplesProvider,
+    private uploadProvider: UploadProvider
     ) {
       this.notebookProvider.search().subscribe(
         (response: IListResponse | any) => {
@@ -151,16 +155,32 @@ export class HomePage {
     console.log('onSelectSample', this.sampleSelected)
   }
 
-  checkText(el, ev){
-    console.log(ev)
+  addFileToNewEntry(files, labbookFK:number = 0 , sampleFK:number = null, content='') {
 
 
-    if (ev.inputType == "deleteContentBackward" ){
-      this.maxlenTextarea = this.maxlenTextarea + 1
-    } else {
-      this.maxlenTextarea = this.maxlenTextarea - 1
-    }
+    let entryInfo = {'labbookFK': labbookFK, 'sampleFK' : sampleFK, 'content': content}
+    let entry = null
+    this.showLoader = true
+
+    return this.uploadProvider.getDefaultEntry(entryInfo['labbookFK'])
+        .then((r : any) => {
+            entry = r;
+            entry.saved = true;
+            entry = { ...entry, ...entryInfo };
+            return this.uploadProvider.createEntry(entry);
+        })
+        .then((response: any) => {
+            entry.entrycode = response.entrycode;
+            this.uploadProvider.uploadFile(entry.labbookFK, entry.entrycode, files).then(
+              (res) => {
+                console.log(res)
+                this.showLoader = false
+              }
+            )
+        })
+
   }
+
   private loadOption(load: string) {
 
     let sourceType: number = 0
