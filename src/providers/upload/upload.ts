@@ -1,5 +1,3 @@
-
-import { Settings } from './../settings/settings';
 import { Injectable } from '@angular/core';
 import { Api } from '../api/api';
 import { HttpHeaders } from '@angular/common/http';

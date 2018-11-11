@@ -126,6 +126,7 @@ export class HomePage {
           handler: () => {
             console.log('Gallery clicked');
             this.loadCameraOrGallery('gallery')
+
           }
         },
         {
