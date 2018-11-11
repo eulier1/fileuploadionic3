@@ -45,6 +45,31 @@
   color: $toggle-md-track-background-color-on;
 }
 
+.searchbar-md .searchbar-input {
+  padding: 6px 12px !important;
+}
+
+.searchbar-md .searchbar-search-icon {
+  width: 0;
+}
+
+.searchbar-input-container{
+  .searchbar-input{
+    &::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+      color: #696767;
+    }
+    &::-moz-placeholder { /* Firefox 19+ */
+      color: #696767;
+    }
+    &:-ms-input-placeholder { /* IE 10+ */
+      color: #696767;
+    }
+    &:-moz-placeholder { /* Firefox 18- */
+      color: #696767;
+    }
+  }
+}
+
 // Utilities
 .bg-transparent {
   background: transparent;
@@ -53,4 +78,5 @@
 //reset & formats
 textarea {
   margin: 4rem 0px !important;
+  color: #696767;
 }

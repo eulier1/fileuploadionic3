@@ -35,9 +35,18 @@ export class HomePage {
 
   public option : CameraOptions
 
-  notebookSearch: FormControl = new FormControl('');
-  public notebookItems: Array<string>;
+  public searchQueryNotebook: string = ''
+  public notebookSelected: { id: number , title: string } = { id: 0, title: '' }
+  public notebookItems: Array<any>
+  public placeholderNotebooks: string = 'Notebooks'
 
+  public searchQuerySample: string = ''
+  public sampleSelected: { id: number , name: string } = { id: 0, name: '' }
+  public sampleItems: Array<any>
+  public placeholderSample: string = 'Sample'
+
+  public maxlenTextarea: number = 240
+  public description: FormControl = new FormControl()
   constructor(
     public navCtrl: NavController,
     public domSanitizer: DomSanitizer,
@@ -50,27 +59,35 @@ export class HomePage {
     ) {
       this.notebookProvider.search().subscribe(
         (response: IListResponse | any) => {
-
+          this.notebookItems = response.list
           console.log('Notebook', response.list )
         }
       )
 
       this.samplesProvider.search().subscribe(
         (response: IListResponse | any) => {
-
+          this.sampleItems = response.list
           console.log('Samples', response.list )
         }
       )
 
-      // this.notebookSearch.valueChanges
-      // .debounceTime(400)
-      // .distinctUntilChanged()
-      // .switchMap(
-      //   (term) =>  { console.log(term); return this.notebookProvider.search(null,term) })
-      // .subscribe(
-      //   (res) => console.log(res)
-      // )
+      this.description.valueChanges
+                      .startWith(null)
+                      .pairwise()
+                      .subscribe( ([previousValue, currentValue]) => {
+                        let compare = previousValue != null ? currentValue.length - previousValue.length : null
+                        if (previousValue === null && currentValue) {
+                          this.maxlenTextarea = this.maxlenTextarea - 1
+                        } else {
+                          if (compare < 0) {
+                            this.maxlenTextarea = this.maxlenTextarea + 1
+                          }
+                          if (compare > 0) {
+                            this.maxlenTextarea = this.maxlenTextarea - 1
+                          }
 
+                        }
+                      })
   }
 
   onSelect() {
@@ -89,7 +106,7 @@ export class HomePage {
     }
 
     let actionSheet = this.actionSheetCtrl.create({
-      title: 'Modify your album',
+      title: 'Select place to upload',
       buttons: [
         {
           text: 'Camera',
@@ -120,6 +137,30 @@ export class HomePage {
 
   }
 
+  onSelectNotebook(item) {
+    this.notebookSelected = item
+    this.placeholderNotebooks = this.notebookSelected.id + ' : ' + this.notebookSelected.title
+    this.searchQueryNotebook = ''
+    console.log('onSelectNotebook', this.notebookSelected)
+  }
+
+  onSelectSample(item) {
+    this.sampleSelected = item
+    this.placeholderSample = this.sampleSelected.id + ' : ' + this.sampleSelected.name
+    this.searchQuerySample = ''
+    console.log('onSelectSample', this.sampleSelected)
+  }
+
+  checkText(el, ev){
+    console.log(ev)
+
+
+    if (ev.inputType == "deleteContentBackward" ){
+      this.maxlenTextarea = this.maxlenTextarea + 1
+    } else {
+      this.maxlenTextarea = this.maxlenTextarea - 1
+    }
+  }
   private loadOption(load: string) {
 
     let sourceType: number = 0
@@ -140,6 +181,7 @@ export class HomePage {
     }
 
   }
+
   private loadSelection() {
 
     this.platform.ready()

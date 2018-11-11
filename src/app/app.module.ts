@@ -7,6 +7,7 @@ import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
 import { IonicStorageModule, Storage } from '@ionic/storage';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { StatusBar } from '@ionic-native/status-bar';
+import { PipesModule } from '../pipes/pipes.module';
 
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
@@ -37,6 +38,7 @@ import { SamplesProvider } from '../providers/sample/sample';
     BrowserModule,
     HttpClientModule,
     ReactiveFormsModule,
+    PipesModule,
     IonicModule.forRoot(MyApp),
     IonicStorageModule.forRoot()
   ],

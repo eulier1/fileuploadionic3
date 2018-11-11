@@ -15,19 +15,33 @@
   <form >
     <ion-list>
       <ion-item>
-        <ion-label floating>Notebook</ion-label>
-        <ion-input type="text" [formControl]="notebookSearch" ></ion-input>
-        <ul>
-          <li *ngFor="let item of notebookItems | async">{{item}}</li>
-        </ul>
+        <ion-searchbar [placeholder]="placeholderNotebooks" name="notebook" [(ngModel)]="searchQueryNotebook" ></ion-searchbar>
+        <ion-toolbar *ngIf="searchQueryNotebook != ''" style="height: 20vh;">
+          <ion-content style="position: absolute">
+          <ion-list >
+            <ion-item *ngFor="let item of (notebookItems | notebooksByIdAndTitle: searchQueryNotebook) " (click)="onSelectNotebook(item)" >
+              {{ item.id }} : {{ item.title }}
+            </ion-item>
+          </ion-list>
+          </ion-content>
+        </ion-toolbar>
       </ion-item>
       <ion-item>
-          <ion-label floating>Sample</ion-label>
-          <ion-input type="text"></ion-input>
-      </ion-item>
+          <ion-searchbar [placeholder]="placeholderSample" name="sample" [(ngModel)]="searchQuerySample" ></ion-searchbar>
+          <ion-toolbar *ngIf="searchQuerySample != ''" style="height: 20vh;">
+            <ion-content style="position: absolute">
+            <ion-list >
+              <ion-item *ngFor="let item of (sampleItems | sampleByIdAndTitle: searchQuerySample) " (click)="onSelectSample(item)" >
+                {{ item.id }} : {{ item.name }}
+              </ion-item>
+            </ion-list>
+            </ion-content>
+          </ion-toolbar>
+        </ion-item>
       <ion-item>
-          <ion-textarea class="textarea__margin" rows="5" placeholder="Description" maxlength="8192"></ion-textarea>
+          <ion-textarea #textareaDescription name="description" [formControl]="description" class="textarea__margin" rows="5" placeholder="Description" [attr.maxlength]="maxlenTextarea"></ion-textarea>
       </ion-item>
+      <h6 text-right> {{ maxlenTextarea }} </h6>
     </ion-list>
   </form>
 
