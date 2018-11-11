@@ -8,3 +8,12 @@ Camera
 
 > https://github.com/apache/cordova-plugin-camera#cameraoptions-errata-
 
+Observable operators & utilities
+
+>http://reactivex.io/rxjs/class/es6/Observable.js~Observable.html#instance-method-pairwise
+
+>http://reactivex.io/documentation/operators/flatmap.html
+
+>https://www.learnrxjs.io/operators/utility/topromise.html
+
+
