@@ -235,7 +235,7 @@ export class HomePage {
     this.notebookSelected = { id: 0, title: '' }
     this.sampleSelected= { id: 0, name: '' }
     this.searchQueryNotebook = ''
-    this.serachQuerySample = ''
+    this.searchQuerySample = ''
     this.description.reset('')
     this.placeholderNotebooks = 'Notebooks'
     this.placeholderSample = 'Sample'
