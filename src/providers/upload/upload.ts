@@ -8,12 +8,12 @@ export class UploadProvider {
   constructor(
     private api: Api,
     ) {
-    console.log('Hello NotebookProvider Provider');
-  }
+    //console.log('Hello NotebookProvider Provider');
+  };
 
   createEntry(instance){
-      return this.api.post( this.api.urlNotebooks, instance)
-      .toPromise()
+      return this.api.post(`${this.api.urlNotebooks}/${instance.labbookFK}/entries/`, instance).toPromise()
+
   }
   getDefaultEntry(bookId: number, shareCode: string = '') {
     return this.api.get(
@@ -21,15 +21,15 @@ export class UploadProvider {
             .toPromise()
             .then((r: any)=>{
               r.datetime = new Date (r.datetime);
-              return r;
+               return r;
             })
   }
 
 
-  uploadFile(bookId: number | string, entryCode: number | string, file: Blob) {
+  uploadFile(bookId: number | string, entryCode: number | string, file: Blob, filename: string) {
 
     const formData = new FormData()
-    formData.append('file', file)
+    formData.append('uploadImage', file, filename)
 
     const headers = new HttpHeaders({ 'enctype': 'multipart/form-data' });
 

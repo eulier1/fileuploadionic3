@@ -2,7 +2,7 @@ import { UploadProvider } from './../../providers/upload/upload';
 import { NotebookProvider } from './../../providers/notebook/notebook';
 import { SamplesProvider } from '../../providers/sample/sample';
 import { Component } from '@angular/core';
-import { NavController, Platform, ActionSheetController } from 'ionic-angular';
+import { NavController, Platform, ActionSheetController, LoadingController, ToastController } from 'ionic-angular';
 import { Camera, CameraOptions } from '@ionic-native/camera';
 import { AndroidPermissions } from '@ionic-native/android-permissions';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -10,6 +10,7 @@ import { FormControl } from '@angular/forms';
 import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/distinctUntilChanged';
 import 'rxjs/add/operator/switchMap';
+import { HttpErrorResponse } from '@angular/common/http';
 
 interface IListResponse {
   list: any[];
@@ -56,42 +57,18 @@ export class HomePage {
     public platform: Platform,
     private camera: Camera,
     public actionSheetCtrl: ActionSheetController,
+    public loadingCtrl: LoadingController,
+    private toastCtrl: ToastController,
     private androidPermissions: AndroidPermissions,
     private notebookProvider: NotebookProvider,
     private samplesProvider: SamplesProvider,
     private uploadProvider: UploadProvider
     ) {
-      this.notebookProvider.search().subscribe(
-        (response: IListResponse | any) => {
-          this.notebookItems = response.list
-          console.log('Notebook', response.list )
-        }
-      )
+      this.initialDataState()
+      this.loadNoteBookProviderSearch()
+      this.loadSampleProviderSearch()
+      this.textareaCharAvailable()
 
-      this.samplesProvider.search().subscribe(
-        (response: IListResponse | any) => {
-          this.sampleItems = response.list
-          console.log('Samples', response.list )
-        }
-      )
-
-      this.description.valueChanges
-                      .startWith(null)
-                      .pairwise()
-                      .subscribe( ([previousValue, currentValue]) => {
-                        let compare = previousValue != null ? currentValue.length - previousValue.length : null
-                        if (previousValue === null && currentValue) {
-                          this.maxlenTextarea = this.maxlenTextarea - 1
-                        } else {
-                          if (compare < 0) {
-                            this.maxlenTextarea = this.maxlenTextarea + 1
-                          }
-                          if (compare > 0) {
-                            this.maxlenTextarea = this.maxlenTextarea - 1
-                          }
-
-                        }
-                      })
   }
 
   onSelect() {
@@ -116,16 +93,16 @@ export class HomePage {
           text: 'Camera',
           icon: iconCamera,
           handler: () => {
-            console.log('Camera clicked');
-            this.loadCameraOrGallery('camera')
+            //console.log('Camera clicked');
+            this.pickCameraOrGallery('camera')
           }
         },
         {
           text: 'Gallery',
           icon: iconImage,
           handler: () => {
-            console.log('Gallery clicked');
-            this.loadCameraOrGallery('gallery')
+            //console.log('Gallery clicked');
+            this.pickCameraOrGallery('gallery')
 
           }
         },
@@ -133,7 +110,7 @@ export class HomePage {
           text: 'Cancel',
           role: 'cancel',
           handler: () => {
-            console.log('Cancel clicked');
+            //console.log('Cancel clicked');
           }
         }
       ]
@@ -146,43 +123,126 @@ export class HomePage {
     this.notebookSelected = item
     this.placeholderNotebooks = this.notebookSelected.id + ' : ' + this.notebookSelected.title
     this.searchQueryNotebook = ''
-    console.log('onSelectNotebook', this.notebookSelected)
+    //console.log('onSelectNotebook', this.notebookSelected)
   }
 
   onSelectSample(item) {
     this.sampleSelected = item
     this.placeholderSample = this.sampleSelected.id + ' : ' + this.sampleSelected.name
     this.searchQuerySample = ''
-    console.log('onSelectSample', this.sampleSelected)
+    //console.log('onSelectSample', this.sampleSelected)
   }
 
-  addFileToNewEntry(files, labbookFK:number = 0 , sampleFK:number = null, content='') {
+  addFileToNewEntry(files, labbookFK:number = 0 , sampleFK:number = null, description, content='') {
 
+    const loader = this.loadingCtrl.create({
+      content: "Uploading File, please stand by...",
+    });
+    loader.present();
 
-    let entryInfo = {'labbookFK': labbookFK, 'sampleFK' : sampleFK, 'content': content}
+    let entryInfo = {'labbookFK': labbookFK, 'sampleFK' : sampleFK, 'content': content, 'description': description}
     let entry = null
-    this.showLoader = true
+
 
     return this.uploadProvider.getDefaultEntry(entryInfo['labbookFK'])
         .then((r : any) => {
             entry = r;
             entry.saved = true;
             entry = { ...entry, ...entryInfo };
-            return this.uploadProvider.createEntry(entry);
-        })
-        .then((response: any) => {
-            entry.entrycode = response.entrycode;
-            this.uploadProvider.uploadFile(entry.labbookFK, entry.entrycode, files).then(
-              (res) => {
-                console.log(res)
-                this.showLoader = false
+            ////console.log(entry)
+            this.uploadProvider.createEntry(entry).then(
+              (res) => {}//console.log(res)
+            ).catch(
+              (e: HttpErrorResponse) => {
+                //console.log(e)
+                const toast = this.toastCtrl.create({
+                  message: `${e.status} - ${e.message}`  ,
+                  showCloseButton : true,
+                  closeButtonText : "OK",
+                  position: 'top'
+                });
+                toast.present();
+                loader.dismiss();
               }
             )
         })
+        .catch(
+          (e) => {
+            //console.log(e)
+            const toast = this.toastCtrl.create({
+              message: `${e.status} - ${e.message}`  ,
+              showCloseButton : true,
+              closeButtonText : "OK",
+              position: 'top'
+            });
+            toast.present();
+            loader.dismiss();
+          }
+        )
+        .then((response: any) => {
+          //console.log(response)
+
+            this.uploadProvider.uploadFile(entry.labbookFK, entry.entrycode, files, this.nameImage).then(
+              (res) => {
+                //console.log(res)
+                loader.dismiss()
+                const toast = this.toastCtrl.create({
+                  message: `File uploaded`  ,
+                  showCloseButton : true,
+                  closeButtonText : "OK",
+                  position: 'top'
+                });
+                this.initialDataState()
+                toast.present();
+              }
+            )
+            .catch(
+              (e) => {
+                //console.log(e)
+                const toast = this.toastCtrl.create({
+                  message: `${e.status} - ${e.message}`  ,
+                  showCloseButton : true,
+                  closeButtonText : "OK",
+                  position: 'top'
+                });
+                toast.present();
+                loader.dismiss();
+              }
+            )
+        })
+        .catch(
+          (e) => {
+            //console.log(e)
+            const toast = this.toastCtrl.create({
+              message: `${e.status} - ${e.message}`  ,
+              showCloseButton : true,
+              closeButtonText : "OK",
+              position: 'top'
+            });
+            toast.present();
+            loader.dismiss();
+          }
+        )
 
   }
 
-  private loadOption(load: string) {
+  goToLogin() {
+    this.navCtrl.push('LoginPage')
+  }
+
+  private initialDataState() {
+    this.blobImage = null
+    this.notebookSelected = { id: 0, title: '' }
+    this.sampleSelected= { id: 0, name: '' }
+    this.searchQueryNotebook = ''
+    this.serachQuerySample = ''
+    this.description.reset('')
+    this.placeholderNotebooks = 'Notebooks'
+    this.placeholderSample = 'Sample'
+    this.maxlenTextarea = 8192
+  }
+
+  private loadCameraOrGalleryOption(load: string) {
 
     let sourceType: number = 0
 
@@ -203,7 +263,7 @@ export class HomePage {
 
   }
 
-  private loadSelection() {
+  private loadCameraOrGallerySelection() {
 
     this.platform.ready()
     .then( () => {
@@ -214,38 +274,38 @@ export class HomePage {
           this.camera.getPicture(this.option).then((imageData) => {
             // imageData is either a base64 encoded string or a file URI
             // If it's base64 (DATA_URL):
-            // console.log(imageData)
+            // //console.log(imageData)
             this.base64Image = 'data:image/jpeg;base64,' + imageData;
             this.nameImage = `image${Math.random()}`
             this.blobImage = this.dataURItoBlob(this.base64Image)
 
 
-            console.log(this.blobImage)
+            //console.log(this.blobImage)
 
           }, (err) => {
             // Handle error
-            console.log(err)
+            //console.log(err)
           })
 
-          console.log('Has permission?',result.hasPermission)
+          //console.log('Has permission?',result.hasPermission)
         },
         err => {
-          console.log(err)
+          //console.log(err)
           this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.CAMERA)
         }
       )}
     )
   }
 
-  private loadCameraOrGallery(load: string) {
+  private pickCameraOrGallery(load: string) {
     if (load == 'camera') {
-      this.loadOption(load)
-      this.loadSelection()
+      this.loadCameraOrGalleryOption(load)
+      this.loadCameraOrGallerySelection()
     }
 
     if (load == 'gallery' ) {
-      this.loadOption(load)
-      this.loadSelection()
+      this.loadCameraOrGalleryOption(load)
+      this.loadCameraOrGallerySelection()
     }
   }
 
@@ -256,6 +316,43 @@ export class HomePage {
         array.push(binary.charCodeAt(i));
     }
     return new Blob([new Uint8Array(array)], {type: 'image/jpeg'});
+  }
+
+  private loadNoteBookProviderSearch() {
+    this.notebookProvider.search().subscribe(
+      (response: IListResponse | any) => {
+        this.notebookItems = response.list
+        //console.log('Notebook', response.list )
+      }
+    )
+  }
+
+  private loadSampleProviderSearch() {
+    this.samplesProvider.search().subscribe(
+      (response: IListResponse | any) => {
+        this.sampleItems = response.list
+        //console.log('Samples', response.list )
+      }
+    )
+  }
+
+  private textareaCharAvailable() {
+    this.description.valueChanges
+    .startWith(null)
+    .pairwise()
+    .subscribe( ([previousValue, currentValue]) => {
+      let compare = previousValue != null ? currentValue.length - previousValue.length : null
+      if (previousValue === null && currentValue) {
+        this.maxlenTextarea = this.maxlenTextarea - 1
+      } else {
+        if (compare < 0) {
+          this.maxlenTextarea = this.maxlenTextarea + 1
+        }
+        if (compare > 0) {
+          this.maxlenTextarea = this.maxlenTextarea - 1
+        }
+      }
+    })
   }
 
 }

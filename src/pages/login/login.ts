@@ -12,8 +12,8 @@ import { HttpErrorResponse } from '@angular/common/http';
 })
 export class LoginPage {
 
-  public username: string = 'mobileapp'
-  public password: string = 'mobileapp'
+  public username: string //= 'mobileapp'
+  public password: string //= 'mobileapp'
   public showLoader: boolean = false
 
   constructor(
@@ -36,27 +36,34 @@ export class LoginPage {
                 this.settings.setValue('api-token', res)
                 .then(
                   (res) => {
-                    console.log(res)
+                    ////console.log(res)
                     this.showLoader = false
                     this.navCtrl.push(HomePage)
                   }
                 )
                 .catch(
                   (e) => {
-                    console.log(e)
+                    ////console.log(e)
                     this.showLoader = false
-                    this.displayToast( {msg: e, duration: 5000, pos: 'top', shCloseButton: false } )
+                    if (e.status === 0) { e.message
+                      this.displayToast( {msg: 'Check your internet conection, and try again' , duration: 5000, pos: 'top', shCloseButton: false } )
+                    } else {
+                      this.displayToast( {msg: e.message, duration: 5000, pos: 'top', shCloseButton: false } )
+                    }
                   }
                 )
               }
           )
         },
         (e: HttpErrorResponse) => {
-          console.log(e)
+          ////console.log(e)
           this.showLoader = false
-          this.displayToast( {msg: e.message, duration: 5000, pos: 'top', shCloseButton: false } )
-        }
-      )
+          if (e.status === 0) { e.message
+            this.displayToast( {msg: 'Check your internet conection, and try again' , duration: 5000, pos: 'top', shCloseButton: false } )
+          } else {
+            this.displayToast( {msg: e.message, duration: 5000, pos: 'top', shCloseButton: false } )
+          }
+        })
 
   }
 

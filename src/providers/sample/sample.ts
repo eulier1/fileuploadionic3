@@ -7,7 +7,7 @@ export class SamplesProvider {
   constructor(
     private api: Api,
     ) {
-    console.log('Hello NotebookProvider Provider');
+    //console.log('Hello NotebookProvider Provider');
   }
 
   search (filter=null, qsearch='', limit: number =1000,  offset: number=1, orderBy ='') {

@@ -48,6 +48,6 @@
 </ion-content>
 
 <ion-footer text-right padding >
-    <button ion-button color="light">Cancel</button>
-    <button ion-button [disabled]="blobImage == null || notebookSelected.title == '' || sampleSelected.name == '' || description.length < 5 " (click)="addFileToNewEntry(blobImage, notebookSelected.id, sampleSelected.id, description)" >Upload</button>
+    <button ion-button (click) = "goToLogin()" color="light">Cancel</button>
+    <button ion-button [disabled]=" blobImage == null || notebookSelected.title == '' || sampleSelected.name == '' || maxlenTextarea > 8188" (click)="addFileToNewEntry(blobImage, notebookSelected.id, sampleSelected.id, description.value)" >Upload</button>
 </ion-footer>

@@ -5,7 +5,7 @@ import { Api } from '../api/api';
 export class LoginProvider {
 
   constructor(private api: Api) {
-    console.log('Hello LoginProvider Provider');
+    //console.log('Hello LoginProvider Provider');
   }
 
   login(username: string, password: string) {

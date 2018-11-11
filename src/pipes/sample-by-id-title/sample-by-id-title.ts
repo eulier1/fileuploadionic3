@@ -15,12 +15,12 @@ export class SampleByIdTitlePipe implements PipeTransform {
    */
   transform(items: any[] = [], term: string = '') {
     let result = []
-    console.log(items)
+    //console.log(items)
 
     if (items.length > 0 && term != ''){
       result = items.filter( (value) =>  (term.match(value.id) || (value.name.toLowerCase().indexOf(term.toLowerCase()) > -1) ) )
     }
-    console.log(result)
+    //console.log(result)
     return result;
 
   }
